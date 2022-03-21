@@ -1,0 +1,6 @@
+sceneSetups:
+- path: Assets/2.2.2 Building a Graph Visualizing Math/Building a Graph Visualizing
+    Math.unity
+  isLoaded: 1
+  isActive: 1
+  isSubScene: 0
