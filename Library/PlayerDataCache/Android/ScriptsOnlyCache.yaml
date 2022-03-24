@@ -1,6 +1,7 @@
 ScriptsOnlyBuild:
   usedScripts:
     Assembly-CSharp.dll:
+    - FPSText
     - Graph
     Unity.RenderPipelines.Core.Runtime.dll:
     - UnityEngine.Rendering.UI.DebugUIHandlerBitField
@@ -39,8 +40,13 @@ ScriptsOnlyBuild:
     - UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset
     - UnityEngine.Rendering.Universal.XRSystemData
     Unity.ShaderGraph.Editor.dll:
-    - UnityEditor.Graphing.GraphObject
     - UnityEditor.ShaderGraph.Drawing.MaterialGraphEditWindow
+    Unity.TextMeshPro.dll:
+    - TMPro.TMP_FontAsset
+    - TMPro.TMP_Settings
+    - TMPro.TMP_SpriteAsset
+    - TMPro.TMP_StyleSheet
+    - TMPro.TextMeshProUGUI
     UnityEditor.TestRunner.dll:
     - UnityEditor.TestTools.TestRunner.Api.CallbacksHolder
     - UnityEditor.TestTools.TestRunner.TestListCacheData
@@ -83,6 +89,8 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 48
       Script: {instanceID: 0}
+    - Class: 49
+      Script: {instanceID: 0}
     - Class: 81
       Script: {instanceID: 0}
     - Class: 89
@@ -110,6 +118,8 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 1952}
     - Class: 114
+      Script: {instanceID: 2036}
+    - Class: 114
       Script: {instanceID: 2044}
     - Class: 114
       Script: {instanceID: 2384}
@@ -117,6 +127,8 @@ ScriptsOnlyBuild:
       Script: {instanceID: 2386}
     - Class: 114
       Script: {instanceID: 2412}
+    - Class: 114
+      Script: {instanceID: 2488}
     - Class: 114
       Script: {instanceID: 2736}
     - Class: 114
@@ -129,6 +141,8 @@ ScriptsOnlyBuild:
       Script: {instanceID: 3218}
     - Class: 114
       Script: {instanceID: 3274}
+    - Class: 114
+      Script: {instanceID: 3284}
     - Class: 114
       Script: {instanceID: 3414}
     - Class: 114
@@ -178,11 +192,17 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 5418}
     - Class: 114
+      Script: {instanceID: 5568}
+    - Class: 114
       Script: {instanceID: 5846}
     - Class: 114
       Script: {instanceID: 5890}
     - Class: 114
+      Script: {instanceID: 6008}
+    - Class: 114
       Script: {instanceID: 6278}
+    - Class: 114
+      Script: {instanceID: 26184}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -586,7 +606,7 @@ ScriptsOnlyBuild:
     className: ShadowCaster2D
   - hash:
       serializedVersion: 2
-      Hash: 5bf81fc2feaed2b4913c6493ed4f4595
+      Hash: 5faaf8f29d635bf3234e11456ee5cb07
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: Graph
@@ -1028,6 +1048,12 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.UI.dll
     namespaceName: UnityEngine.EventSystems
     className: TouchInputModule
+  - hash:
+      serializedVersion: 2
+      Hash: b7ce72117d10faff714f2af9a93c4100
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: FPSText
   platform: 13
   scenePathNames:
   - Assets/2.2.2 Building a Graph Visualizing Math/Building a Graph Visualizing Math.unity
