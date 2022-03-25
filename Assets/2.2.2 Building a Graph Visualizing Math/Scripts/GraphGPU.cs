@@ -6,15 +6,17 @@ using UnityEngine.UI;
 public class GraphGPU : MonoBehaviour
 {
     public enum TransitionMode { Cycle, Random}
+    const int maxResolution = 1000;
+
     [SerializeField] ComputeShader computeShader;
     [SerializeField] Mesh mesh;
     [SerializeField] Material material;
-    [SerializeField,Range(5,200)] int resolution = 10;
+    [SerializeField,Range(10, maxResolution)] int resolution = 400;
     [SerializeField] FunctionLibrary.FunctionName functionName;
     [SerializeField, Range(0, 1)] float alpha = 0.7f;
     [SerializeField, Range(0, 32)] float beta = 4;
     [SerializeField, Range(0, 16)] float gamma = 2;
-    [SerializeField] Text textAlpha, textBeta, textGamma;
+    [SerializeField] Text textAlpha, textBeta, textGamma, textResolution;
     [SerializeField] Dropdown dropdown;
     [SerializeField,Min(0f)] float functionDurationThreshold = 1f, transitionDurationThreshold=1f;
     [SerializeField] TransitionMode transitionMode;
@@ -26,9 +28,13 @@ public class GraphGPU : MonoBehaviour
     ComputeBuffer positionsBuffer;
 
     static readonly int PositionsBufferID = Shader.PropertyToID("_Positions"),
-                        TimeID = Shader.PropertyToID("_Time") , 
-                        ResolutionID = Shader.PropertyToID("_Resolution"), 
-                        StepID = Shader.PropertyToID("_Step");
+                        TimeID = Shader.PropertyToID("_Time"),
+                        ResolutionID = Shader.PropertyToID("_Resolution"),
+                        StepID = Shader.PropertyToID("_Step"),
+                        AlphaID = Shader.PropertyToID("alpha"),
+                        BetaID = Shader.PropertyToID("beta"),
+                        GammaID = Shader.PropertyToID("gamma"),
+                        TransitionDurationID = Shader.PropertyToID("_TransitionDuration");
 
     public void sliderAlphaChange(Slider s)
     {
@@ -47,6 +53,13 @@ public class GraphGPU : MonoBehaviour
         gamma = s.value;
         Text t = s.GetComponentInChildren<Text>();
         t.text = "Gamma(0-16): " + gamma;
+    }
+
+    public void sliderResolutionChange(Slider s)
+    {
+        resolution = (int)s.value;
+        Text t = s.GetComponentInChildren<Text>();
+        t.text = "Resolution(10-1000):" + resolution;
     }
 
     public void dropdownChange(int funcIndex)
@@ -76,9 +89,11 @@ public class GraphGPU : MonoBehaviour
         alpha = textAlpha.GetComponentInParent<Slider>().value;
         beta = textBeta.GetComponentInParent<Slider>().value;
         gamma = textGamma.GetComponentInParent<Slider>().value;
+        resolution = (int)textResolution.GetComponentInParent<Slider>().value;
         textAlpha.text = "Alpha(0-1): " + alpha;
         textBeta.text = "Beta(0-16): " + beta;
         textGamma.text = "Gamma(0-16): " + gamma;
+        textResolution.text = "Resolution(10 - 1000): " + resolution;
         UpdateDropdown();
     }
     // Start is called before the first frame update
@@ -87,7 +102,7 @@ public class GraphGPU : MonoBehaviour
     }
     private void OnEnable()
     {
-        positionsBuffer = new ComputeBuffer(resolution * resolution, 3 * 4);
+        positionsBuffer = new ComputeBuffer(maxResolution * maxResolution, 3 * 4);
     }
 
     private void OnDisable()
@@ -110,16 +125,28 @@ public class GraphGPU : MonoBehaviour
 
     void UpdateOnGPU()
     {
+        int kernelIndex = (int)functionName + (transiting ? (int)oldFunctionName: (int)functionName) * (int)FunctionLibrary.FunctionName.End;
+        //Debug.Log(kernelIndex);
         computeShader.SetFloat(TimeID, Time.time);
         computeShader.SetFloat(StepID, 1f / resolution);
         computeShader.SetFloat(ResolutionID, resolution);
-        computeShader.SetBuffer(0, PositionsBufferID, positionsBuffer);
+        computeShader.SetFloat(AlphaID, alpha);
+        computeShader.SetFloat(BetaID, beta);
+        computeShader.SetFloat(GammaID, gamma);
+        if (transiting) { 
+            computeShader.SetFloat(TransitionDurationID, Mathf.SmoothStep(0f,1f, durationCounter / transitionDurationThreshold));
+        }
+        computeShader.SetBuffer(kernelIndex, PositionsBufferID, positionsBuffer);
+        material.SetFloat(StepID, 1f / resolution);
+        material.SetBuffer(PositionsBufferID, positionsBuffer);
+
         int groups = Mathf.CeilToInt(resolution / 8f);
-        computeShader.Dispatch(0, groups, groups, 1);
+
+
+        computeShader.Dispatch(kernelIndex, groups, groups, 1);
 
         var bounds = new Bounds(Vector3.zero, Vector3.one * (2f + 2f / resolution));
-
-        Graphics.DrawMeshInstancedProcedural(mesh, 0,material, bounds, positionsBuffer.count);
+        Graphics.DrawMeshInstancedProcedural(mesh, 0,material, bounds, resolution* resolution);
     }
 
     // Update is called once per frame

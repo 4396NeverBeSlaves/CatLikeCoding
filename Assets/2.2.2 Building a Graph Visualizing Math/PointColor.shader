@@ -5,7 +5,7 @@ Shader "Graph/Point Color"{
 
     SubShader{
         CGPROGRAM
-        #pragma surface SurfaceConfigure Standard fullforwardshadows
+        #pragma surface SurfaceConfigure Standard fullforwardshadows addshadow
         #pragma target 3.0
 
         struct Input{
